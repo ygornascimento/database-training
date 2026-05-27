@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: otp-postgres-lab
+    environment:
+      POSTGRES_DB: otp_lab
+      POSTGRES_USER: otp_user
+      POSTGRES_PASSWORD: otp_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/sql
+
+volumes:
+  postgres_data:
