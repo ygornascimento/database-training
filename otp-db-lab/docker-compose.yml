@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: otp-db-lab
+    environment:
+      POSTGRES_DB: otp_legacy_lab
+      POSTGRES_USER: otp_user
+      POSTGRES_PASSWORD: otp_password
+    ports:
+      - "5433:5432"
+    volumes:
+      - otp_pg_data:/var/lib/postgresql/data
+      - ./sql:/sql
+
+volumes:
+  otp_pg_data:
