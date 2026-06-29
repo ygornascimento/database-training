@@ -111,3 +111,47 @@ PK da occurrence: id
 Próximo passo: descobrir as FKs da occurrence
 Lição importante: comentário explica significado; nulidade muda o tipo de JOIN.
  */
+
+/*
+Regra prática para você no trabalho
+Quando encontrar uma FK, pergunte:
+1. Quem tem a FK?
+2. Para quem ela aponta?
+3. A coluna aceita NULL?
+4. Essa tabela é referência, histórico, evento ou entidade principal?
+5. Esse relacionamento é obrigatório ou opcional?
+6. Para consultar, uso JOIN ou LEFT JOIN?
+ */
+
+--- Descobrir quem aponta para occurrence - Pergunta investigativa: “Quais tabelas registram informações relacionadas a uma ocorrência?” Ou, tecnicamente: “Quais tabelas possuem uma FK apontando para occurrence.id?”
+
+SELECT
+    tc.table_name AS source_table,
+    kcu.column_name AS source_column,
+    ccu.table_name AS referenced_table,
+    ccu.column_name AS referenced_column
+FROM information_schema.table_constraints tc
+JOIN information_schema.key_column_usage kcu
+    ON tc.constraint_name = kcu.constraint_name
+   AND tc.table_schema = kcu.table_schema
+JOIN information_schema.constraint_column_usage ccu
+    ON ccu.constraint_name = tc.constraint_name
+   AND ccu.table_schema = tc.table_schema
+WHERE tc.constraint_type = 'FOREIGN KEY'
+  AND tc.table_schema = 'public'
+  AND ccu.table_name = 'occurrence'
+  AND ccu.column_name = 'id'
+ORDER BY tc.table_name, kcu.column_name;
+
+-- Primeira query real de investigação - Pergunta investigativa: “Quais são as ocorrências cadastradas e quais informações básicas consigo ver diretamente na tabela central?”
+SELECT
+    id,
+    protocol,
+    external_code,
+    title,
+    origin,
+    created_at,
+    canceled_at
+FROM occurrence
+ORDER BY created_at DESC
+LIMIT 20;
